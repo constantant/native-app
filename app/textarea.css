@@ -1,0 +1,10 @@
+.app-textarea{
+    position: relative;
+}
+.app-textarea label{
+    display: block;
+}
+.app-textarea textarea{
+    display: inline-block;
+    width: 100%;
+}
