@@ -24,7 +24,7 @@ app.inherits = function (child_constructor, parent_constructor) {
 /**
  *
  * @param {Function} template
- * @param opt_template_data
+ * @param {Object} opt_template_data
  * @returns {!Element}
  */
 app.renderAsElement = function (template, opt_template_data) {
