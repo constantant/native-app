@@ -3,11 +3,19 @@
  */
 
 /**
- * @param {String} label
  * @constructor
  */
 app.ui.Layout = function () {
     app.ui.Component.call(this);
+
+    /**
+     * @type {app.Model}
+     * @private
+     */
+    this._model = new app.Model({
+        value_1:'',
+        value_2:''
+    });
 };
 app.inherits(app.ui.Layout, app.ui.Component);
 
@@ -30,6 +38,7 @@ app.ui.Layout.prototype.createDom = function () {
 
 app.ui.Layout.prototype.enterDocument = function () {
     var _this = this,
+        _model = this._model,
         element = this.getElement(),
         items = element.querySelectorAll('.app-layout-item');
     
@@ -37,15 +46,24 @@ app.ui.Layout.prototype.enterDocument = function () {
     this.item2 = new app.ui.Textarea('XXX xxx');
 
     this.item1['onInput'] = function (event) {
-        _this.item2.setValue(
-            _this.item1.getValue()
-        )
+        _model.setProperty('value_2',  _this.item1.getValue());
     };
     
     this.item2['onInput'] = function (event) {
-        _this.item1.setValue(
-            _this.item2.getValue()
-        )
+        _model.setProperty('value_1',  _this.item2.getValue());
+    };
+
+    _model['onSetProperty'] =  function (name, value, old_value) {
+        switch (name){
+            case 'value_1':
+                _this.item1.setValue(value);
+                break;
+            case 'value_2':
+                _this.item2.setValue(value);
+                break;
+            default:
+                break;
+        }
     };
 
     this.item1.render(items[0]);

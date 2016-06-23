@@ -42,6 +42,54 @@ app.renderAsElement = function (template, opt_template_data) {
     return wrapper;
 };
 
+/**
+ * Model
+ * @param {Object} properties
+ * @constructor
+ */
+app.Model = function (properties) {
+    this._properties = properties || {};
+};
+
+/**
+ * @returns {Object|{}|*}
+ */
+app.Model.prototype.getProperties = function () {
+    return this._properties;
+};
+
+/**
+ * @param {String} name
+ * @returns {*}
+ */
+app.Model.prototype.getProperty = function (name) {
+    return this._properties[name];
+};
+
+/**
+ * @param {String} name
+ * @param {String} value
+ */
+app.Model.prototype.setProperty = function (name, value) {
+    var oldValue;
+    if(this._properties[name] !== void 0){
+        oldValue = this._properties[name];
+        this._properties[name] = value;
+        this._onSetProperty(name, value, oldValue);
+    }
+};
+
+/**
+ * @param {String} name
+ * @param {String} value
+ * @param {String} old_value
+ * @private
+ */
+app.Model.prototype._onSetProperty = function (name, value, old_value) {
+    if(this['onSetProperty']){
+        this['onSetProperty'](name, value, old_value);
+    }
+};
 
 
 
