@@ -13,8 +13,7 @@ app.ui.Layout = function () {
      * @private
      */
     this._model = new app.Model({
-        value_1:'',
-        value_2:''
+        value: ''
     });
 };
 app.inherits(app.ui.Layout, app.ui.Component);
@@ -24,7 +23,7 @@ app.ui.Layout.prototype.createDom = function () {
     this.setElement(
         app.renderAsElement(
             function (data) {
-                return '<div class="app-layout" id="lu'+ data.id +'">' +
+                return '<div class="app-layout" id="lu' + data.id + '">' +
                     '<div class="app-layout-item"></div>' +
                     '<div class="app-layout-item"></div>' +
                     '</div>';
@@ -36,36 +35,53 @@ app.ui.Layout.prototype.createDom = function () {
     );
 };
 
+/** @override */
 app.ui.Layout.prototype.enterDocument = function () {
-    var _this = this,
-        _model = this._model,
-        element = this.getElement(),
+    var element = this.getElement(),
         items = element.querySelectorAll('.app-layout-item');
-    
+
     this.item1 = new app.ui.Textarea('Hello world');
     this.item2 = new app.ui.Textarea('XXX xxx');
 
-    this.item1['onInput'] = function (event) {
-        _model.setProperty('value_2',  _this.item1.getValue());
-    };
-    
-    this.item2['onInput'] = function (event) {
-        _model.setProperty('value_1',  _this.item2.getValue());
-    };
+    app.events.addListener(
+        this.item1,
+        'input',
+        this._updateModel,
+        this
+    );
 
-    _model['onSetProperty'] =  function (name, value, old_value) {
-        switch (name){
-            case 'value_1':
-                _this.item1.setValue(value);
-                break;
-            case 'value_2':
-                _this.item2.setValue(value);
-                break;
-            default:
-                break;
-        }
-    };
+    app.events.addListener(
+        this.item2,
+        'input',
+        this._updateModel,
+        this
+    );
+
+    app.events.addListener(
+        this._model,
+        'setProperty',
+        this._updateTextarea,
+        this
+    );
 
     this.item1.render(items[0]);
     this.item2.render(items[1]);
+};
+
+/**
+ * @param {app.events.Event} event
+ * @private
+ */
+app.ui.Layout.prototype._updateModel = function (event) {
+    this._model.setProperty('value', event.target.getValue());
+};
+
+/**
+ * @param {app.events.Event} event
+ * @private
+ */
+app.ui.Layout.prototype._updateTextarea = function (event) {
+    var value = event.target.getProperty('value');
+    this.item1.setValue(value);
+    this.item2.setValue(value);
 };

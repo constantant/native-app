@@ -48,23 +48,17 @@ app.ui.Textarea.prototype.createDom = function () {
 };
 
 app.ui.Textarea.prototype.enterDocument = function () {
-    var _this = this;
-    
-    
     this._input = this.getElement().querySelector('textarea');
-    this._input.addEventListener('input', function (event) {
-        _this._onInput(event);
-    })
+    this._input.addEventListener('input', this._onInput.bind(this));
 };
 
-app.ui.Textarea.prototype.exitDocument = function () {};
+app.ui.Textarea.prototype.exitDocument = function () {
+    this._input.removeEventListener('input', this._onInput);
+};
 
-/**
- * @param {Event} event
- * @private
- */
-app.ui.Textarea.prototype._onInput = function (event) {
-    if(this['onInput']){
-        this['onInput'](event);
-    }
+app.ui.Textarea.prototype._onInput = function () {
+    app.events.dispatchEvent(
+        this,
+        new app.events.Event('input', this)
+    );
 };
